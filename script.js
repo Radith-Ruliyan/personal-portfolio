@@ -140,7 +140,7 @@
     tick();
   }
 
-  /* ---------- Contact form (front-end only demo) ---------- */
+  /* ---------- Contact form ---------- */
   var form = document.getElementById('contactForm');
   var status = document.getElementById('formStatus');
 
@@ -148,6 +148,8 @@
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       var name = form.name.value.trim();
+      var email = form.email.value.trim();
+      var message = form.message.value.trim();
 
       if (!form.checkValidity()) {
         status.textContent = 'Mohon lengkapi semua kolom dengan benar.';
@@ -155,9 +157,15 @@
         return;
       }
 
-      // Placeholder behaviour — hubungkan ke backend / layanan email Anda sendiri.
+      // Format mailto link to automatically draft email to ruliyanradith@gmail.com
+      var mailtoUrl = 'mailto:ruliyanradith@gmail.com' +
+        '?subject=' + encodeURIComponent('Pesan Portofolio — ' + name) +
+        '&body=' + encodeURIComponent('Nama: ' + name + '\nEmail: ' + email + '\n\nPesan:\n' + message);
+
+      window.location.href = mailtoUrl;
+
       status.style.color = '';
-      status.textContent = 'Terima kasih, ' + name + '! Pesan Anda telah tercatat (demo front-end).';
+      status.textContent = 'Terima kasih, ' + name + '! Aplikasi email Anda dibuka untuk mengirimkan pesan ini.';
       form.reset();
     });
   }
