@@ -104,9 +104,9 @@
 
     /* ---------- Hero typewriter ---------- */
     var roles = [
-      'website responsif.',
+      'website yang responsif.',
       'UI yang nyaman digunakan.',
-      'sistem yang efisien.',
+      'sistem yang efisien dan cepat.',
       'setiap detail dengan teliti.'
   ];
   var twEl = document.getElementById('typewriter');
