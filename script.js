@@ -213,6 +213,54 @@
     }
   }
 
+  /* ---------- Certificate Modal Lightbox ---------- */
+  var certModal = document.getElementById('certModal');
+  var certModalImg = document.getElementById('certModalImg');
+  var certModalTitle = document.getElementById('certModalTitle');
+  var certModalClose = document.getElementById('certModalClose');
+  var certModalBackdrop = document.getElementById('certModalBackdrop');
+
+  function openCertModal(imgSrc, titleText) {
+    if (!certModal || !certModalImg) return;
+    certModalImg.src = imgSrc;
+    if (certModalTitle && titleText) certModalTitle.textContent = titleText;
+    certModal.classList.add('is-open');
+    certModal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden'; // Stop background scrolling
+  }
+
+  function closeCertModal() {
+    if (!certModal) return;
+    certModal.classList.remove('is-open');
+    certModal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+
+  // Trigger modal via card media click or button click
+  document.addEventListener('click', function (e) {
+    var mediaTrigger = e.target.closest('.card__media--cert');
+    var btnTrigger = e.target.closest('.cert-modal-btn');
+
+    if (mediaTrigger) {
+      var imgSrc = mediaTrigger.getAttribute('data-img');
+      var titleText = mediaTrigger.getAttribute('data-title');
+      if (imgSrc) openCertModal(imgSrc, titleText);
+    } else if (btnTrigger) {
+      var imgSrc = btnTrigger.getAttribute('data-img');
+      var titleText = btnTrigger.getAttribute('data-title');
+      if (imgSrc) openCertModal(imgSrc, titleText);
+    }
+  });
+
+  if (certModalClose) certModalClose.addEventListener('click', closeCertModal);
+  if (certModalBackdrop) certModalBackdrop.addEventListener('click', closeCertModal);
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && certModal && certModal.classList.contains('is-open')) {
+      closeCertModal();
+    }
+  });
+
   /* ---------- Footer year ---------- */
   var yearEl = document.getElementById('year');
   if (yearEl) yearEl.textContent = new Date().getFullYear();
