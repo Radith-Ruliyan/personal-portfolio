@@ -507,6 +507,115 @@ main{
 .read-more i{ transition: transform .2s var(--ease); }
 .read-more:hover i{ transform: translateX(3px); }
 
+.grid--certificates{ grid-template-columns: repeat(3, 1fr); }
+
+.card--cert{
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.card--cert .card__media--cert{
+  height: 140px;
+  display: grid;
+  place-items: center;
+  font-size: 2.5rem;
+  color: var(--accent);
+  border-bottom: 1px solid var(--border);
+  background: radial-gradient(circle at center, var(--accent-soft) 0%, transparent 70%),
+              repeating-linear-gradient(45deg, transparent 0 8px, var(--border-soft) 8px 9px);
+  position: relative;
+  transition: color .3s var(--ease);
+}
+.card--cert:hover .card__media--cert{
+  color: var(--accent-2);
+}
+.card--cert .card__body{
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.cert__header{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .5rem;
+  margin-bottom: .8rem;
+  font-family: var(--font-mono);
+  font-size: .72rem;
+}
+.cert__issuer{
+  color: var(--accent-2);
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  font-weight: 500;
+}
+.cert__date{
+  color: var(--text-muted);
+  background: var(--bg-elevated);
+  padding: .2rem .5rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-soft);
+}
+.card--cert h3{
+  font-size: 1.05rem;
+  margin-bottom: .6rem;
+}
+.cert__badge-row{
+  display: flex;
+  gap: .5rem;
+  flex-wrap: wrap;
+  margin-bottom: .8rem;
+}
+.badge{
+  font-family: var(--font-mono);
+  font-size: .74rem;
+  font-weight: 500;
+  padding: .3rem .65rem;
+  border-radius: var(--radius-sm);
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+}
+.badge--gold{
+  background: rgba(212, 162, 76, 0.15);
+  color: var(--accent);
+  border: 1px solid rgba(212, 162, 76, 0.3);
+}
+.badge--success{
+  background: rgba(92, 140, 124, 0.15);
+  color: var(--accent-2);
+  border: 1px solid rgba(92, 140, 124, 0.3);
+}
+.badge--info{
+  background: rgba(70, 130, 180, 0.15);
+  color: #7ab3e1;
+  border: 1px solid rgba(70, 130, 180, 0.3);
+}
+.card--cert p{
+  font-size: .88rem;
+  flex: 1;
+}
+.btn-cert-link{
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  padding: .4rem .85rem;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: .8rem;
+  font-family: var(--font-mono);
+  color: var(--text-secondary);
+  transition: color .2s var(--ease), border-color .2s var(--ease), background-color .2s var(--ease);
+}
+.btn-cert-link:hover{
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
 /* =========================================================
    TIMELINE (pendidikan / pengalaman)
    ========================================================= */
@@ -763,6 +872,7 @@ a, button, input, textarea, .nav-link, .chip, .tag {
   }
 
   .grid--portfolio{ grid-template-columns: 1fr; }
+  .grid--certificates{ grid-template-columns: 1fr; }
   .grid--blog{ grid-template-columns: 1fr; }
   .card--project .card__body{ padding: 1.25rem; }
   .card__links a{
