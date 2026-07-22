@@ -955,9 +955,9 @@ a, button, input, textarea, .nav-link, .chip, .tag {
     justify-content: center;
   }
   .hero__title{
-    font-size: clamp(1.8rem, 6.5vw, 2.6rem);
+    font-size: clamp(1.75rem, 6vw, 2.5rem);
     max-width: 100%;
-    min-height: auto;
+    min-height: 5em; /* Menjaga tinggi judul tetap stabil saat teks ketik berganti */
   }
   .hero__desc{
     font-size: 0.96rem;
@@ -1025,6 +1025,10 @@ a, button, input, textarea, .nav-link, .chip, .tag {
 @media (max-width: 480px){
   .section{ padding: 4.2rem 1.1rem; }
   .hero{ padding: 4.8rem 1.1rem 2rem; }
+  .hero__title{
+    font-size: clamp(1.5rem, 5.8vw, 1.9rem);
+    min-height: 5.6em; /* Mengunci tinggi wadah judul pada HP kecil */
+  }
   .hero__stats{
     grid-template-columns: repeat(3, 1fr);
     gap: .5rem;
