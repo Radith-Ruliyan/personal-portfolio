@@ -937,9 +937,13 @@ a, button, input, textarea, .nav-link, .chip, .tag {
   .sidenav{
     width: min(280px, 85vw);
     transform: translateX(-100%);
-    box-shadow: 20px 0 40px rgba(0,0,0,.4);
+    border-right: none;
+    box-shadow: none;
   }
-  .sidenav.is-open{ transform: translateX(0); }
+  .sidenav.is-open{
+    transform: translateX(0);
+    box-shadow: 20px 0 40px rgba(0,0,0,.3);
+  }
   .nav-toggle{ display: flex; right: 0.9rem; top: 0.9rem; width: 42px; height: 42px; }
   .nav-scrim.is-visible{ display: block; opacity: 1; pointer-events: auto; }
 
