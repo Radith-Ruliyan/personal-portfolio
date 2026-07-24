@@ -9,7 +9,7 @@
 <!-- Google Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Lora:ital,wght@0,500;0,600;1,400&display=swap" rel="stylesheet">
 
 <!-- Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -17,9 +17,6 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-<!-- Blueprint grid background -->
-<div class="grid-backdrop" aria-hidden="true"></div>
 
 <!-- ===== THEME TOGGLE ===== -->
 <button class="theme-toggle" id="themeToggle" aria-label="Ubah tema" aria-live="polite">
@@ -34,8 +31,15 @@
 <!-- ===== SIDEBAR NAV ===== -->
 <header class="sidenav" id="sidenav">
   <div class="sidenav__brand">
-    <span class="brand-mark">RR</span>
-    <span class="brand-name">Radith Ruliyan<br><em>Software Developer &amp; Web Designer</em></span>
+    <div class="brand-avatar-wrap">
+      <img src="assets/foto-profil.jpg" alt="Radith Ruliyan" class="brand-avatar">
+      <span class="brand-status" title="Terbuka untuk peluang baru"></span>
+    </div>
+    <div class="brand-info">
+      <span class="brand-name">Radith Ruliyan</span>
+      <span class="brand-role">Software Developer</span>
+      <span class="brand-avail"><i class="fa-solid fa-circle"></i> Open to work</span>
+    </div>
   </div>
 
   <nav class="sidenav__links" aria-label="Navigasi utama">
@@ -66,17 +70,13 @@
 
   <!-- BERANDA -->
   <section id="beranda" class="section hero">
-    <p class="eyebrow">— Dokumen 01 / Profil</p>
+    <p class="eyebrow">Profil Saya</p>
     <h1 class="hero__title">
-      Halo, saya <span class="accent">Radith Ruliyan</span>.<br>
+      Halo, saya <span class="accent serif-accent">Radith Ruliyan</span>.<br>
       Saya merancang &amp; membangun<br>
       <span class="typewriter" id="typewriter"></span><span class="caret">|</span>
     </h1>
-    <p class="hero__desc">
-       Saya percaya teknologi terbaik adalah teknologi yang terasa sederhana saat digunakan.
-
-       Melalui web development, UI/UX, dan pengembangan sistem, saya berusaha menciptakan pengalaman digital yang cepat, intuitif, dan memberikan nilai bagi penggunanya.
-    </p>
+    <p class="hero__desc">Saya percaya teknologi terbaik adalah teknologi yang terasa sederhana saat digunakan. Melalui web development, UI/UX, dan pengembangan sistem, saya berusaha menciptakan pengalaman digital yang cepat, intuitif, dan memberikan nilai bagi penggunanya.</p>
     <div class="hero__cta">
       <a href="#portfolio" class="btn btn--primary">Lihat Portfolio <i class="fa-solid fa-arrow-right"></i></a>
       <a href="#kontak" class="btn btn--ghost">Hubungi Saya</a>
@@ -96,7 +96,7 @@
 
   <!-- TENTANG SAYA -->
   <section id="tentang" class="section fade-in">
-    <p class="eyebrow">— Dokumen 02 / Tentang</p>
+    <p class="eyebrow">Profil &amp; Biografi</p>
     <h2 class="section__title">Tentang Saya</h2>
 
     <div class="about">
@@ -104,8 +104,6 @@
         <div class="portrait-frame">
           <img src="assets/foto-profil.jpg" alt="Foto Radith Ruliyan" class="portrait-img">
         </div>
-        <div class="portrait-corner tl"></div>
-        <div class="portrait-corner br"></div>
       </div>
 
       <div class="about__content">
@@ -133,9 +131,9 @@
 
   <!-- PORTFOLIO -->
   <section id="portfolio" class="section fade-in">
-    <p class="eyebrow">— Dokumen 03 / Karya</p>
+    <p class="eyebrow">Proyek Pilihan</p>
     <h2 class="section__title">Portfolio</h2>
-    <p class="section__lead">Berberapa proyek yang merepresentasikan cara saya bekerja.</p>
+    <p class="section__lead">Beberapa proyek yang merepresentasikan cara saya bekerja.</p>
 
     <div class="grid grid--portfolio">
 
@@ -204,7 +202,7 @@
 
   <!-- PENDIDIKAN -->
   <section id="pendidikan" class="section fade-in">
-    <p class="eyebrow">— Dokumen 04 / Riwayat</p>
+    <p class="eyebrow">Riwayat Pendidikan</p>
     <h2 class="section__title">Pendidikan</h2>
 
     <div class="timeline">
@@ -243,7 +241,7 @@ Mempelajari pengembangan perangkat lunak, basis data, analisis sistem, dan desai
 
   <!-- PENGALAMAN -->
   <section id="pengalaman" class="section fade-in">
-    <p class="eyebrow">— Dokumen 05 / Riwayat</p>
+    <p class="eyebrow">Riwayat Pekerjaan</p>
     <h2 class="section__title">Pengalaman</h2>
 
     <div class="timeline timeline--work">
@@ -290,7 +288,7 @@ Mempelajari pengembangan perangkat lunak, basis data, analisis sistem, dan desai
 
   <!-- SERTIFIKAT -->
   <section id="sertifikat" class="section fade-in">
-    <p class="eyebrow">— Dokumen 06 / Prestasi</p>
+    <p class="eyebrow">Sertifikat</p>
     <h2 class="section__title">Sertifikat &amp; Lisensi</h2>
     <p class="section__lead">Lisensi resmi, sertifikasi kompetensi keahlian, penilaian praktik kerja, dan skor bahasa Inggris internasional.</p>
 
@@ -451,7 +449,7 @@ Mempelajari pengembangan perangkat lunak, basis data, analisis sistem, dan desai
 
   <!-- PUBLIKASI & MODUL (SCRIBD) -->
   <section id="publikasi" class="section fade-in">
-    <p class="eyebrow">— Dokumen 07 / Dokumen</p>
+    <p class="eyebrow">Publikasi &amp; Modul</p>
     <h2 class="section__title">Publikasi &amp; Modul Pembelajaran</h2>
     <p class="section__lead">Koleksi panduan teknis, modul pembelajaran, dan dokumen referensi yang saya publikasikan di Scribd.</p>
 
@@ -532,7 +530,7 @@ Mempelajari pengembangan perangkat lunak, basis data, analisis sistem, dan desai
 
   <!-- BLOG -->
   <section id="blog" class="section fade-in">
-    <p class="eyebrow">— Dokumen 08 / Tulisan</p>
+    <p class="eyebrow">Blog &amp; Tulisan</p>
     <h2 class="section__title">Blog</h2>
     <p class="section__lead">Catatan singkat seputar proses kerja, teknologi, dan hal yang sedang dipelajari.</p>
 
@@ -618,7 +616,7 @@ Mempelajari pengembangan perangkat lunak, basis data, analisis sistem, dan desai
 
   <!-- KONTAK -->
   <section id="kontak" class="section fade-in">
-    <p class="eyebrow">— Dokumen 09 / Hubungi</p>
+    <p class="eyebrow">Kontak</p>
     <h2 class="section__title">Kontak</h2>
     <p class="section__lead">Punya proyek atau sekadar ingin menyapa? Silakan isi form di bawah atau hubungi langsung.</p>
 
