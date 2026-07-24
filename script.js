@@ -261,6 +261,32 @@
     }
   });
 
+  /* ---------- Live Clock (WIB - Tangerang, Banten) ---------- */
+  var timeEl = document.getElementById('localTime');
+  if (timeEl) {
+    var updateClock = function () {
+      var options = {
+        timeZone: 'Asia/Jakarta',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+      };
+      try {
+        var formatter = new Intl.DateTimeFormat('id-ID', options);
+        var timeStr = formatter.format(new Date());
+        timeEl.innerHTML = '<i class="fa-regular fa-clock"></i> ' + timeStr.replace(/\./g, ':') + ' WIB';
+      } catch (err) {
+        var now = new Date();
+        var hrs = String(now.getHours()).padStart(2, '0');
+        var mins = String(now.getMinutes()).padStart(2, '0');
+        timeEl.innerHTML = '<i class="fa-regular fa-clock"></i> ' + hrs + ':' + mins + ' WIB';
+      }
+    };
+    updateClock();
+    setInterval(updateClock, 1000);
+  }
+
   /* ---------- Footer year ---------- */
   var yearEl = document.getElementById('year');
   if (yearEl) yearEl.textContent = new Date().getFullYear();
