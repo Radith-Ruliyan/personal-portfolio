@@ -182,7 +182,7 @@
   updateThemeIcon(currentTheme);
 
   if (themeToggle) {
-    themeToggle.addEventListener('click', function () {
+    themeToggle.addEventListener('click', function (e) {
       var activeTheme = document.documentElement.getAttribute('data-theme');
       var newTheme = activeTheme === 'dark' ? 'light' : 'dark';
 
@@ -194,10 +194,33 @@
         return;
       }
 
-      document.startViewTransition(function () {
+      var x = e.clientX || window.innerWidth / 2;
+      var y = e.clientY || window.innerHeight / 2;
+      var endRadius = Math.hypot(
+        Math.max(x, window.innerWidth - x),
+        Math.max(y, window.innerHeight - y)
+      );
+
+      var transition = document.startViewTransition(function () {
         document.documentElement.setAttribute('data-theme', newTheme);
         localStorage.setItem('theme', newTheme);
         updateThemeIcon(newTheme);
+      });
+
+      transition.ready.then(function () {
+        document.documentElement.animate(
+          {
+            clipPath: [
+              'circle(0px at ' + x + 'px ' + y + 'px)',
+              'circle(' + endRadius + 'px at ' + x + 'px ' + y + 'px)'
+            ]
+          },
+          {
+            duration: 550,
+            easing: 'cubic-bezier(0.3, 0, 0.2, 1)',
+            pseudoElement: '::view-transition-new(root)'
+          }
+        );
       });
     });
   }
@@ -290,5 +313,100 @@
   /* ---------- Footer year ---------- */
   var yearEl = document.getElementById('year');
   if (yearEl) yearEl.textContent = new Date().getFullYear();
+
+  /* =========================================================
+     PREMIUM DYNAMIC INTERACTIONS & ANIMATIONS (Figma-Prototype level)
+     ========================================================= */
+
+  // Check if touch device
+  var isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
+  if (!isTouch) {
+    /* ---------- Custom Cursor with Lerp (spring physics) ---------- */
+    var cursor = document.getElementById('customCursor');
+    var cursorDot = document.getElementById('customCursorDot');
+    var mouseX = 0, mouseY = 0;
+    var cursorX = 0, cursorY = 0;
+    var lerpSpeed = 0.15;
+
+    document.addEventListener('mousemove', function (e) {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      if (cursorDot) {
+        cursorDot.style.left = mouseX + 'px';
+        cursorDot.style.top = mouseY + 'px';
+      }
+    });
+
+    var renderCursor = function () {
+      var dx = mouseX - cursorX;
+      var dy = mouseY - cursorY;
+      cursorX += dx * lerpSpeed;
+      cursorY += dy * lerpSpeed;
+      if (cursor) {
+        cursor.style.left = cursorX + 'px';
+        cursor.style.top = cursorY + 'px';
+      }
+      requestAnimationFrame(renderCursor);
+    };
+    renderCursor();
+
+    /* ---------- Cursor Hover Scale Effect ---------- */
+    var hoverables = document.querySelectorAll('a, button, .card, .sidenav__brand, .sidenav__social a, .chip, .to-top');
+    hoverables.forEach(function (el) {
+      el.addEventListener('mouseenter', function () {
+        if (cursor) cursor.classList.add('hovered');
+      });
+      el.addEventListener('mouseleave', function () {
+        if (cursor) cursor.classList.remove('hovered');
+      });
+    });
+
+    /* ---------- 3D Card Tilt with Dynamic Reflection Sheen ---------- */
+    var cards = document.querySelectorAll('.card');
+    cards.forEach(function (card) {
+      // Inject glass reflection sheen dynamically
+      var sheen = document.createElement('div');
+      sheen.className = 'card__sheen';
+      card.appendChild(sheen);
+
+      card.addEventListener('mousemove', function (e) {
+        var rect = card.getBoundingClientRect();
+        var x = e.clientX - rect.left;
+        var y = e.clientY - rect.top;
+
+        var midX = rect.width / 2;
+        var midY = rect.height / 2;
+
+        // Angle bounds
+        var tiltX = (midY - y) / 12;
+        var tiltY = (x - midX) / 12;
+
+        card.style.transform = 'perspective(800px) rotateX(' + tiltX + 'deg) rotateY(' + tiltY + 'deg) translateY(-3px)';
+        card.style.setProperty('--sheen-x', x + 'px');
+        card.style.setProperty('--sheen-y', y + 'px');
+      });
+
+      card.addEventListener('mouseleave', function () {
+        card.style.transform = 'perspective(800px) rotateX(0deg) rotateY(0deg) translateY(0)';
+      });
+    });
+
+    /* ---------- Magnetic Hover Effect on Main Buttons & Toggles ---------- */
+    var magnetics = document.querySelectorAll('.btn, .theme-toggle, .sidenav__brand');
+    magnetics.forEach(function (el) {
+      el.addEventListener('mousemove', function (e) {
+        var rect = el.getBoundingClientRect();
+        var x = e.clientX - rect.left - (rect.width / 2);
+        var y = e.clientY - rect.top - (rect.height / 2);
+        // drift 20% toward cursor
+        el.style.transform = 'translate(' + (x * 0.22) + 'px, ' + (y * 0.22) + 'px)';
+      });
+
+      el.addEventListener('mouseleave', function () {
+        el.style.transform = 'translate(0, 0)';
+      });
+    });
+  }
 
 })();

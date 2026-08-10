@@ -2,48 +2,48 @@
    TOKENS
    ========================================================= */
 :root{
-  --bg:            #09090b;   /* Sleek slate black */
-  --bg-elevated:   #121215;   /* Dark matte dashboard color */
-  --bg-card:       #18181b;   /* Clean card gray */
-  --border:        #27272a;   /* Subtle high-end border */
-  --border-soft:   #1f1f23;
-  --bg-ambient:    rgba(212,162,76,0.035);
+  --bg:            #0d131f;   /* Deep warm midnight blue */
+  --bg-elevated:   #131b2c;   /* Elevated warm blue */
+  --bg-card:       #182235;   /* Warm card slate-blue */
+  --border:        #253248;   /* Soft slate-blue border */
+  --border-soft:   #1b273b;
+  --bg-ambient:    rgba(95,157,247,0.06);
 
-  --text-primary:  #fafafa;   /* Near white */
-  --text-secondary:#a1a1aa;   /* Soft zinc gray */
-  --text-muted:    #52525b;
+  --text-primary:  #f1f5f9;   /* Soft slate white */
+  --text-secondary:#94a3b8;   /* Calm slate gray */
+  --text-muted:    #64748b;
 
-  --accent:        #d4af37;   /* Classic satin gold */
-  --accent-dim:    #b5942b;
-  --accent-soft:   rgba(212,175,55,0.08);
-  --accent-2:      #4d7c6b;   /* Editorial tech green */
+  --accent:        #5f9df7;   /* Calm, soft warm sky blue */
+  --accent-dim:    #4180d8;
+  --accent-soft:   rgba(95,157,247,0.08);
+  --accent-2:      #8ba3c2;   /* Soft secondary blue-gray */
 
   --font-display: 'Plus Jakarta Sans', sans-serif;
   --font-body:    'Plus Jakarta Sans', sans-serif;
   --font-serif:   'Lora', serif;
 
   --sidenav-w: 280px;
-  --radius: 8px;
-  --radius-sm: 5px;
+  --radius: 12px;
+  --radius-sm: 7px;
   --ease: cubic-bezier(.65,0,.35,1);
 }
 
 [data-theme="light"] {
-  --bg:            #fafafa;   /* Editorial clean off-white */
-  --bg-elevated:   #f4f4f5;
-  --bg-card:       #ffffff;
-  --border:        #e4e4e7;   /* Crisp gray border */
-  --border-soft:   #f4f4f5;
-  --bg-ambient:    rgba(197,145,55,0.02);
+  --bg:            #fcfaf6;   /* Soft warm calm cream/ivory */
+  --bg-elevated:   #f5f2eb;   /* Warm grey-beige */
+  --bg-card:       #ffffff;   /* Pure white card */
+  --border:        #e6e2da;   /* Warm soft border */
+  --border-soft:   #f2eee5;
+  --bg-ambient:    rgba(59,130,246,0.03);
 
-  --text-primary:  #18181b;   /* High contrast black */
-  --text-secondary:#52525b;
-  --text-muted:    #a1a1aa;
+  --text-primary:  #1e293b;   /* Deep slate primary */
+  --text-secondary:#475569;
+  --text-muted:    #8b9bb0;
 
-  --accent:        #b48a32;
-  --accent-dim:    #936e22;
-  --accent-soft:   rgba(180,138,50,0.08);
-  --accent-2:      #3b6154;
+  --accent:        #3b82f6;   /* Calm blue accent */
+  --accent-dim:    #2563eb;
+  --accent-soft:   rgba(59,130,246,0.06);
+  --accent-2:      #5c7a9c;
 }
 
 /* =========================================================
@@ -1103,6 +1103,12 @@ a, button, input, textarea, .nav-link, .chip, .tag {
   -webkit-tap-highlight-color: transparent;
 }
 
+/* Tactile Mobile active feedback pops */
+.card:active, .btn:active, .sidenav__social a:active, .chip:active, .theme-toggle:active {
+  transform: scale(0.96) !important;
+  transition: transform 0.1s cubic-bezier(0.25, 1, 0.5, 1) !important;
+}
+
 @media (max-width: 1000px){
   .sidenav{
     width: min(280px, 85vw);
@@ -1218,4 +1224,110 @@ a, button, input, textarea, .nav-link, .chip, .tag {
   }
   .card--project .card__media{ height: 130px; font-size: 2rem; }
   .footer{ padding: 2rem 1.1rem 2.4rem; }
+}
+
+/* =========================================================
+   PREMIUM CUSTOM CURSOR STYLES
+   ========================================================= */
+.custom-cursor {
+  width: 28px;
+  height: 28px;
+  border: 1.5px solid var(--accent);
+  border-radius: 50%;
+  position: fixed;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 9999;
+  transition: width 0.3s var(--ease), height 0.3s var(--ease), background-color 0.3s var(--ease), border-color 0.3s var(--ease);
+  mix-blend-mode: difference;
+  background-color: transparent;
+  display: block;
+}
+
+.custom-cursor-dot {
+  width: 5px;
+  height: 5px;
+  background-color: var(--accent);
+  border-radius: 50%;
+  position: fixed;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 10000;
+}
+
+/* Hover States for Interactive Cursor */
+.custom-cursor.hovered {
+  width: 54px;
+  height: 54px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.8);
+}
+
+/* Hide native cursor in desktop if supported */
+@media (hover: hover) and (pointer: fine) {
+  body {
+    cursor: none;
+  }
+  a, button, [role="button"], input[type="submit"] {
+    cursor: none;
+  }
+}
+
+/* Disable Custom Cursor on Mobile/Touch Devices */
+@media (max-width: 1000px) or (hover: none) {
+  .custom-cursor, .custom-cursor-dot {
+    display: none !important;
+  }
+  body, a, button {
+    cursor: auto !important;
+  }
+}
+
+/* =========================================================
+   3Dperspective TILT & GLOW SHEEN STYLES
+   ========================================================= */
+.card {
+  position: relative;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+/* Glass sheen reflection inside card */
+.card__sheen {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle 150px at var(--sheen-x, 0) var(--sheen-y, 0),
+    rgba(255, 255, 255, 0.12),
+    transparent 80%
+  );
+  pointer-events: none;
+  z-index: 5;
+  opacity: 0;
+  transition: opacity 0.4s var(--ease);
+}
+.card:hover .card__sheen {
+  opacity: 1;
+}
+
+/* =========================================================
+   MAGNETIC INTERACTIVE BUTTON TRANSITION
+   ========================================================= */
+.btn, .theme-toggle, .sidenav__brand, .sidenav__social a {
+  will-change: transform;
+  transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* =========================================================
+   THEME CLIP PATH RIPPLE TRANSITION (circular sweep)
+   ========================================================= */
+::view-transition-image-pair(root) {
+  isolation: auto;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+  display: block;
 }
