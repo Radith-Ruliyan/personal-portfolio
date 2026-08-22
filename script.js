@@ -362,33 +362,26 @@
       });
     });
 
-    /* ---------- 3D Card Tilt with Dynamic Reflection Sheen ---------- */
+    /* ---------- Interactive Card Highlight (pointer-tracked sheen, no 3D) ---------- */
     var cards = document.querySelectorAll('.card');
     cards.forEach(function (card) {
-      // Inject glass reflection sheen dynamically
-      var sheen = document.createElement('div');
-      sheen.className = 'card__sheen';
-      card.appendChild(sheen);
+      var frame = 0;
 
       card.addEventListener('mousemove', function (e) {
-        var rect = card.getBoundingClientRect();
-        var x = e.clientX - rect.left;
-        var y = e.clientY - rect.top;
-
-        var midX = rect.width / 2;
-        var midY = rect.height / 2;
-
-        // Angle bounds
-        var tiltX = (midY - y) / 12;
-        var tiltY = (x - midX) / 12;
-
-        card.style.transform = 'perspective(800px) rotateX(' + tiltX + 'deg) rotateY(' + tiltY + 'deg) translateY(-3px)';
-        card.style.setProperty('--sheen-x', x + 'px');
-        card.style.setProperty('--sheen-y', y + 'px');
+        if (frame) cancelAnimationFrame(frame);
+        frame = requestAnimationFrame(function () {
+          var rect = card.getBoundingClientRect();
+          var x = e.clientX - rect.left;
+          var y = e.clientY - rect.top;
+          card.style.setProperty('--sheen-x', x + 'px');
+          card.style.setProperty('--sheen-y', y + 'px');
+          card.classList.add('is-hovered');
+        });
       });
 
       card.addEventListener('mouseleave', function () {
-        card.style.transform = 'perspective(800px) rotateX(0deg) rotateY(0deg) translateY(0)';
+        if (frame) cancelAnimationFrame(frame);
+        card.classList.remove('is-hovered');
       });
     });
 
