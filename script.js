@@ -5,39 +5,146 @@
 (function () {
   'use strict';
 
-  /* ---------- Mobile nav toggle ---------- */
+  /* ---------- Progressive Enhancement Marker ---------- */
+  document.documentElement.classList.add('js');
+
+  /* ---------- Safe Storage Utilities ---------- */
+  function safeGetStorage(key, fallback) {
+    try {
+      var val = localStorage.getItem(key);
+      return val !== null ? val : fallback;
+    } catch (e) {
+      return fallback;
+    }
+  }
+
+  function safeSetStorage(key, val) {
+    try {
+      localStorage.setItem(key, val);
+    } catch (e) {}
+  }
+
+  /* ---------- Unified Scroll-Lock Manager ---------- */
+  var scrollLockCount = 0;
+  var lockedScrollY = 0;
+
+  function lockScroll() {
+    if (scrollLockCount === 0) {
+      lockedScrollY = window.scrollY || window.pageYOffset || document.documentElement.scrollTop;
+      document.body.style.position = 'fixed';
+      document.body.style.top = -lockedScrollY + 'px';
+      document.body.style.left = '0';
+      document.body.style.right = '0';
+      document.body.style.width = '100%';
+      document.body.style.overflow = 'hidden';
+    }
+    scrollLockCount++;
+  }
+
+  function unlockScroll() {
+    if (scrollLockCount <= 0) return;
+    scrollLockCount--;
+    if (scrollLockCount === 0) {
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.right = '';
+      document.body.style.width = '';
+      document.body.style.overflow = '';
+      window.scrollTo(0, lockedScrollY);
+    }
+  }
+
+  /* ---------- Mobile Nav Toggle & Offcanvas ---------- */
   var navToggle = document.getElementById('navToggle');
   var sidenav   = document.getElementById('sidenav');
   var navScrim  = document.getElementById('navScrim');
 
   function openNav() {
+    if (!sidenav || !navToggle || !navScrim) return;
     sidenav.classList.add('is-open');
     navToggle.classList.add('is-open');
     navScrim.classList.add('is-visible');
     navToggle.setAttribute('aria-expanded', 'true');
+    navToggle.setAttribute('aria-label', 'Tutup menu navigasi');
+    sidenav.setAttribute('aria-hidden', 'false');
+    sidenav.removeAttribute('inert');
+    lockScroll();
   }
-  function closeNav() {
+
+  function closeNav(skipFocus) {
+    if (!sidenav || !sidenav.classList.contains('is-open')) return;
     sidenav.classList.remove('is-open');
-    navToggle.classList.remove('is-open');
-    navScrim.classList.remove('is-visible');
-    navToggle.setAttribute('aria-expanded', 'false');
+    if (navToggle) {
+      navToggle.classList.remove('is-open');
+      navToggle.setAttribute('aria-expanded', 'false');
+      navToggle.setAttribute('aria-label', 'Buka menu navigasi');
+    }
+    if (navScrim) navScrim.classList.remove('is-visible');
+    if (window.innerWidth <= 1000) {
+      sidenav.setAttribute('aria-hidden', 'true');
+      sidenav.setAttribute('inert', '');
+    }
+    unlockScroll();
+    if (!skipFocus && navToggle && typeof navToggle.focus === 'function') {
+      navToggle.focus();
+    }
   }
-  navToggle.addEventListener('click', function () {
-    sidenav.classList.contains('is-open') ? closeNav() : openNav();
-  });
-  navScrim.addEventListener('click', closeNav);
+
+  if (navToggle) {
+    navToggle.addEventListener('click', function () {
+      if (sidenav && sidenav.classList.contains('is-open')) {
+        closeNav();
+      } else {
+        openNav();
+      }
+    });
+  }
+
+  if (navScrim) {
+    navScrim.addEventListener('click', function () {
+      closeNav();
+    });
+  }
 
   var navLinks = document.querySelectorAll('.nav-link');
   navLinks.forEach(function (link) {
     link.addEventListener('click', function () {
-      if (window.innerWidth <= 1000) closeNav();
+      if (window.innerWidth <= 1000) {
+        closeNav(true);
+      }
     });
   });
 
-  /* ---------- Smooth scroll (native CSS handles it; JS ensures offset) ---------- */
+  function handleNavResponsiveState() {
+    if (!sidenav) return;
+    if (window.innerWidth > 1000) {
+      if (sidenav.classList.contains('is-open')) {
+        closeNav(true);
+      }
+      sidenav.setAttribute('aria-hidden', 'false');
+      sidenav.removeAttribute('inert');
+    } else {
+      if (!sidenav.classList.contains('is-open')) {
+        sidenav.setAttribute('aria-hidden', 'true');
+        sidenav.setAttribute('inert', '');
+      }
+    }
+  }
+  window.addEventListener('resize', handleNavResponsiveState);
+  window.addEventListener('orientationchange', function () {
+    if (sidenav && sidenav.classList.contains('is-open')) {
+      closeNav(true);
+    }
+    handleNavResponsiveState();
+  });
+  handleNavResponsiveState();
+
+  /* ---------- Smooth Scroll (Preserve hash & offset) ---------- */
   navLinks.forEach(function (link) {
     link.addEventListener('click', function (e) {
       var targetId = link.getAttribute('href');
+      if (!targetId || targetId.charAt(0) !== '#') return;
       var target = document.querySelector(targetId);
       if (!target) return;
       e.preventDefault();
@@ -46,10 +153,11 @@
     });
   });
 
-  /* ---------- Scroll-spy: highlight active nav link ---------- */
+  /* ---------- Scroll-Spy: Highlight Active Nav Link ---------- */
   var sections = Array.prototype.slice.call(document.querySelectorAll('main .section'));
 
   function updateActiveLink() {
+    if (sections.length === 0) return;
     var scrollPos = window.scrollY + window.innerHeight * 0.35;
     var current = sections[0];
     sections.forEach(function (sec) {
@@ -60,9 +168,11 @@
     });
   }
 
-  /* ---------- Fade-in on scroll (IntersectionObserver) ---------- */
+  /* ---------- Fade-in on Scroll (IntersectionObserver) ---------- */
+  var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var fadeEls = document.querySelectorAll('.fade-in');
-  if ('IntersectionObserver' in window) {
+
+  if ('IntersectionObserver' in window && !prefersReducedMotion) {
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
         if (entry.isIntersecting) {
@@ -70,24 +180,31 @@
           io.unobserve(entry.target);
         }
       });
-    }, { threshold: 0.15, rootMargin: '0px 0px -60px 0px' });
+    }, {
+      threshold: 0, /* Crucial: 0 threshold so long sections (e.g. 24 blog cards) reveal immediately */
+      rootMargin: '0px 0px -40px 0px'
+    });
 
     fadeEls.forEach(function (el) { io.observe(el); });
   } else {
-    // Fallback: no observer support, just show everything
+    // Fallback: no observer or reduced motion, reveal all immediately
     fadeEls.forEach(function (el) { el.classList.add('in-view'); });
   }
 
-  /* ---------- Back-to-top button ---------- */
+  /* ---------- Back-to-top Button ---------- */
   var toTop = document.getElementById('toTop');
   function updateToTop() {
-    toTop.classList.toggle('visible', window.scrollY > 500);
+    if (toTop) {
+      toTop.classList.toggle('visible', window.scrollY > 400);
+    }
   }
-  toTop.addEventListener('click', function () {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  });
+  if (toTop) {
+    toTop.addEventListener('click', function () {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
 
-  /* ---------- Scroll listener (throttled via rAF) ---------- */
+  /* ---------- Scroll Listener (Throttled via rAF) ---------- */
   var ticking = false;
   window.addEventListener('scroll', function () {
     if (!ticking) {
@@ -98,16 +215,16 @@
       });
       ticking = true;
     }
-  });
+  }, { passive: true });
   updateActiveLink();
   updateToTop();
 
-    /* ---------- Hero typewriter ---------- */
-    var roles = [
-      'website yang responsif.',
-      'UI yang nyaman digunakan.',
-      'sistem yang efisien dan cepat.',
-      'setiap detail dengan teliti.'
+  /* ---------- Hero Typewriter ---------- */
+  var roles = [
+    'website yang responsif.',
+    'UI yang nyaman digunakan.',
+    'sistem yang efisien dan cepat.',
+    'setiap detail dengan teliti.'
   ];
   var twEl = document.getElementById('typewriter');
 
@@ -140,7 +257,7 @@
     tick();
   }
 
-  /* ---------- Contact form ---------- */
+  /* ---------- Contact Form (Mailto Generator) ---------- */
   var form = document.getElementById('contactForm');
   var status = document.getElementById('formStatus');
 
@@ -151,13 +268,12 @@
       var email = form.email.value.trim();
       var message = form.message.value.trim();
 
-      if (!form.checkValidity()) {
+      if (!form.checkValidity() || !name || !email || !message) {
         status.textContent = 'Mohon lengkapi semua kolom dengan benar.';
         status.style.color = '#d4746c';
         return;
       }
 
-      // Format mailto link to automatically draft email to ruliyanradith@gmail.com
       var mailtoUrl = 'mailto:ruliyanradith@gmail.com' +
         '?subject=' + encodeURIComponent('Pesan Portofolio — ' + name) +
         '&body=' + encodeURIComponent('Nama: ' + name + '\nEmail: ' + email + '\n\nPesan:\n' + message);
@@ -174,22 +290,33 @@
   var themeToggle = document.getElementById('themeToggle');
   var themeToggleIcon = themeToggle ? themeToggle.querySelector('i') : null;
 
-  var savedTheme = localStorage.getItem('theme');
   var systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  var savedTheme = safeGetStorage('theme', null);
   var currentTheme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
 
   document.documentElement.setAttribute('data-theme', currentTheme);
   updateThemeIcon(currentTheme);
+
+  function updateThemeIcon(theme) {
+    if (!themeToggleIcon) return;
+    if (theme === 'dark') {
+      themeToggleIcon.className = 'fa-solid fa-sun';
+      if (themeToggle) themeToggle.setAttribute('aria-label', 'Ganti ke mode terang');
+    } else {
+      themeToggleIcon.className = 'fa-solid fa-moon';
+      if (themeToggle) themeToggle.setAttribute('aria-label', 'Ganti ke mode gelap');
+    }
+  }
 
   if (themeToggle) {
     themeToggle.addEventListener('click', function (e) {
       var activeTheme = document.documentElement.getAttribute('data-theme');
       var newTheme = activeTheme === 'dark' ? 'light' : 'dark';
 
-      // Fallback if browser doesn't support View Transitions API
-      if (!document.startViewTransition) {
+      // If View Transition unsupported or reduced motion requested, apply immediately
+      if (!document.startViewTransition || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
         document.documentElement.setAttribute('data-theme', newTheme);
-        localStorage.setItem('theme', newTheme);
+        safeSetStorage('theme', newTheme);
         updateThemeIcon(newTheme);
         return;
       }
@@ -203,7 +330,7 @@
 
       var transition = document.startViewTransition(function () {
         document.documentElement.setAttribute('data-theme', newTheme);
-        localStorage.setItem('theme', newTheme);
+        safeSetStorage('theme', newTheme);
         updateThemeIcon(newTheme);
       });
 
@@ -216,7 +343,7 @@
             ]
           },
           {
-            duration: 550,
+            duration: 500,
             easing: 'cubic-bezier(0.3, 0, 0.2, 1)',
             pseudoElement: '::view-transition-new(root)'
           }
@@ -225,62 +352,79 @@
     });
   }
 
-  function updateThemeIcon(theme) {
-    if (!themeToggleIcon) return;
-    if (theme === 'dark') {
-      themeToggleIcon.className = 'fa-solid fa-sun';
-      themeToggle.setAttribute('aria-label', 'Ganti ke mode terang');
-    } else {
-      themeToggleIcon.className = 'fa-solid fa-moon';
-      themeToggle.setAttribute('aria-label', 'Ganti ke mode gelap');
-    }
-  }
-
-  /* ---------- Certificate Modal Lightbox ---------- */
+  /* ---------- Certificate Modal Lightbox (Accessible & Focus Trapped) ---------- */
   var certModal = document.getElementById('certModal');
   var certModalImg = document.getElementById('certModalImg');
   var certModalTitle = document.getElementById('certModalTitle');
   var certModalClose = document.getElementById('certModalClose');
   var certModalBackdrop = document.getElementById('certModalBackdrop');
+  var lastModalTrigger = null;
 
-  function openCertModal(imgSrc, titleText) {
+  function openCertModal(imgSrc, titleText, triggerEl) {
     if (!certModal || !certModalImg) return;
+    lastModalTrigger = triggerEl || document.activeElement;
     certModalImg.src = imgSrc;
+    certModalImg.alt = titleText || 'Pratinjau Sertifikat';
     if (certModalTitle && titleText) certModalTitle.textContent = titleText;
     certModal.classList.add('is-open');
     certModal.setAttribute('aria-hidden', 'false');
-    document.body.style.overflow = 'hidden'; // Stop background scrolling
+    lockScroll();
+    if (certModalClose) certModalClose.focus();
   }
 
   function closeCertModal() {
-    if (!certModal) return;
+    if (!certModal || !certModal.classList.contains('is-open')) return;
     certModal.classList.remove('is-open');
     certModal.setAttribute('aria-hidden', 'true');
-    document.body.style.overflow = '';
+    unlockScroll();
+    if (lastModalTrigger && typeof lastModalTrigger.focus === 'function') {
+      lastModalTrigger.focus();
+    }
   }
 
-  // Trigger modal via card media click or button click
   document.addEventListener('click', function (e) {
     var mediaTrigger = e.target.closest('.card__media--cert');
     var btnTrigger = e.target.closest('.cert-modal-btn');
+    var trigger = mediaTrigger || btnTrigger;
 
-    if (mediaTrigger) {
-      var imgSrc = mediaTrigger.getAttribute('data-img');
-      var titleText = mediaTrigger.getAttribute('data-title');
-      if (imgSrc) openCertModal(imgSrc, titleText);
-    } else if (btnTrigger) {
-      var imgSrc = btnTrigger.getAttribute('data-img');
-      var titleText = btnTrigger.getAttribute('data-title');
-      if (imgSrc) openCertModal(imgSrc, titleText);
+    if (trigger) {
+      var imgSrc = trigger.getAttribute('data-img');
+      var titleText = trigger.getAttribute('data-title');
+      if (imgSrc) openCertModal(imgSrc, titleText, trigger);
     }
   });
 
   if (certModalClose) certModalClose.addEventListener('click', closeCertModal);
   if (certModalBackdrop) certModalBackdrop.addEventListener('click', closeCertModal);
 
+  // Modal Focus Trap
+  if (certModal) {
+    certModal.addEventListener('keydown', function (e) {
+      if (!certModal.classList.contains('is-open')) return;
+      if (e.key === 'Tab') {
+        var focusables = certModal.querySelectorAll('button:not([disabled]), [href], input:not([disabled]), [tabindex]:not([tabindex="-1"])');
+        if (focusables.length === 0) return;
+        var first = focusables[0];
+        var last = focusables[focusables.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    });
+  }
+
+  // Global Escape key listener
   document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape' && certModal && certModal.classList.contains('is-open')) {
-      closeCertModal();
+    if (e.key === 'Escape') {
+      if (certModal && certModal.classList.contains('is-open')) {
+        closeCertModal();
+      } else if (sidenav && sidenav.classList.contains('is-open')) {
+        closeNav();
+      }
     }
   });
 
@@ -310,24 +454,43 @@
     setInterval(updateClock, 1000);
   }
 
-  /* ---------- Footer year ---------- */
+  /* ---------- Footer Year ---------- */
   var yearEl = document.getElementById('year');
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 
   /* =========================================================
-     PREMIUM DYNAMIC INTERACTIONS & ANIMATIONS (Figma-Prototype level)
+     DYNAMIC INTERACTIONS & ANIMATIONS (Fine Pointer Only)
      ========================================================= */
+  var hasFinePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
-  // Check if touch device
-  var isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+  if (hasFinePointer && !prefersReducedMotion) {
+    document.documentElement.classList.add('has-custom-cursor');
 
-  if (!isTouch) {
-    /* ---------- Custom Cursor with Lerp (spring physics) ---------- */
+    /* ---------- Custom Cursor with Lerp (Spring Physics) ---------- */
     var cursor = document.getElementById('customCursor');
     var cursorDot = document.getElementById('customCursorDot');
-    var mouseX = 0, mouseY = 0;
-    var cursorX = 0, cursorY = 0;
-    var lerpSpeed = 0.15;
+    var mouseX = -100, mouseY = -100;
+    var cursorX = -100, cursorY = -100;
+    var lerpSpeed = 0.18;
+    var cursorRaf = null;
+
+    function renderCursor() {
+      var dx = mouseX - cursorX;
+      var dy = mouseY - cursorY;
+      cursorX += dx * lerpSpeed;
+      cursorY += dy * lerpSpeed;
+
+      if (cursor) {
+        cursor.style.left = cursorX + 'px';
+        cursor.style.top = cursorY + 'px';
+      }
+
+      if (Math.abs(dx) > 0.1 || Math.abs(dy) > 0.1) {
+        cursorRaf = requestAnimationFrame(renderCursor);
+      } else {
+        cursorRaf = null;
+      }
+    }
 
     document.addEventListener('mousemove', function (e) {
       mouseX = e.clientX;
@@ -336,20 +499,17 @@
         cursorDot.style.left = mouseX + 'px';
         cursorDot.style.top = mouseY + 'px';
       }
+      if (!cursorRaf && !document.hidden) {
+        cursorRaf = requestAnimationFrame(renderCursor);
+      }
     });
 
-    var renderCursor = function () {
-      var dx = mouseX - cursorX;
-      var dy = mouseY - cursorY;
-      cursorX += dx * lerpSpeed;
-      cursorY += dy * lerpSpeed;
-      if (cursor) {
-        cursor.style.left = cursorX + 'px';
-        cursor.style.top = cursorY + 'px';
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden && cursorRaf) {
+        cancelAnimationFrame(cursorRaf);
+        cursorRaf = null;
       }
-      requestAnimationFrame(renderCursor);
-    };
-    renderCursor();
+    });
 
     /* ---------- Cursor Hover Scale Effect ---------- */
     var hoverables = document.querySelectorAll('a, button, .card, .sidenav__brand, .sidenav__social a, .chip, .to-top');
@@ -362,7 +522,7 @@
       });
     });
 
-    /* ---------- Interactive Card Highlight (pointer-tracked sheen, no 3D) ---------- */
+    /* ---------- Interactive Card Highlight (pointer-tracked sheen) ---------- */
     var cards = document.querySelectorAll('.card');
     cards.forEach(function (card) {
       var frame = 0;
@@ -385,19 +545,18 @@
       });
     });
 
-    /* ---------- Magnetic Hover Effect on Main Buttons & Toggles ---------- */
+    /* ---------- Magnetic Hover Effect ---------- */
     var magnetics = document.querySelectorAll('.btn, .theme-toggle, .sidenav__brand');
     magnetics.forEach(function (el) {
       el.addEventListener('mousemove', function (e) {
         var rect = el.getBoundingClientRect();
         var x = e.clientX - rect.left - (rect.width / 2);
         var y = e.clientY - rect.top - (rect.height / 2);
-        // drift 20% toward cursor
-        el.style.transform = 'translate(' + (x * 0.22) + 'px, ' + (y * 0.22) + 'px)';
+        el.style.transform = 'translate(' + (x * 0.18) + 'px, ' + (y * 0.18) + 'px)';
       });
 
       el.addEventListener('mouseleave', function () {
-        el.style.transform = 'translate(0, 0)';
+        el.style.transform = '';
       });
     });
   }
