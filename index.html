@@ -19,8 +19,7 @@
   (function() {
     try {
       var saved = localStorage.getItem('theme');
-      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      var theme = saved || (prefersDark ? 'dark' : 'light');
+      var theme = (saved === 'light' || saved === 'dark') ? saved : 'dark';
       document.documentElement.setAttribute('data-theme', theme);
     } catch (e) {
       document.documentElement.setAttribute('data-theme', 'dark');
@@ -40,9 +39,23 @@
 </div>
 
 <!-- ===== THEME TOGGLE ===== -->
-<button class="theme-toggle" id="themeToggle" aria-label="Ubah tema" aria-live="polite">
-  <i class="fa-solid fa-moon"></i>
+<button class="theme-toggle" id="themeToggle" aria-label="Ganti ke mode terang" aria-live="polite">
+  <i class="fa-solid fa-sun"></i>
 </button>
+<script>
+  (function() {
+    try {
+      if (document.documentElement.getAttribute('data-theme') === 'light') {
+        var btn = document.getElementById('themeToggle');
+        if (btn) {
+          btn.setAttribute('aria-label', 'Ganti ke mode gelap');
+          var icon = btn.querySelector('i');
+          if (icon) icon.className = 'fa-solid fa-moon';
+        }
+      }
+    } catch (e) {}
+  })();
+</script>
 
 <!-- ===== NAV TOGGLE (mobile) ===== -->
 <button class="nav-toggle" id="navToggle" aria-label="Buka menu navigasi" aria-expanded="false" aria-controls="sidenav">

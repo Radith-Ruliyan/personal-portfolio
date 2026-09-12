@@ -286,13 +286,15 @@
     });
   }
 
-  /* ---------- Dark/Light Mode Theme Toggle ---------- */
+  /* ---------- Dark/Light Mode Theme Toggle (Soft Color Crossfade) ---------- */
   var themeToggle = document.getElementById('themeToggle');
   var themeToggleIcon = themeToggle ? themeToggle.querySelector('i') : null;
+  var iconAnimTimer = null;
+  var iconSettleTimer = null;
 
-  var systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  // Strict default: Dark mode for all new visitors (localStorage is honored if set)
   var savedTheme = safeGetStorage('theme', null);
-  var currentTheme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+  var currentTheme = (savedTheme === 'light' || savedTheme === 'dark') ? savedTheme : 'dark';
 
   document.documentElement.setAttribute('data-theme', currentTheme);
   updateThemeIcon(currentTheme);
@@ -308,47 +310,57 @@
     }
   }
 
+  function triggerIconAnimation(targetTheme) {
+    if (!themeToggle || !themeToggleIcon) return;
+
+    var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) {
+      themeToggle.classList.remove('theme-anim-out', 'theme-anim-in');
+      updateThemeIcon(targetTheme);
+      return;
+    }
+
+    // Cancel any ongoing animation timer to keep state strictly in-sync on rapid clicks
+    if (iconAnimTimer) {
+      clearTimeout(iconAnimTimer);
+      iconAnimTimer = null;
+    }
+    if (iconSettleTimer) {
+      clearTimeout(iconSettleTimer);
+      iconSettleTimer = null;
+    }
+
+    // Phase 1: Rotate slightly & scale out (110ms)
+    themeToggle.classList.remove('theme-anim-out', 'theme-anim-in');
+    void themeToggle.offsetWidth; // Force DOM reflow to restart CSS keyframe cleanly
+    themeToggle.classList.add('theme-anim-out');
+
+    // Phase 2: Halfway (~110ms), swap icon glyph and animate back in
+    iconAnimTimer = setTimeout(function () {
+      updateThemeIcon(targetTheme);
+      themeToggle.classList.remove('theme-anim-out');
+      themeToggle.classList.add('theme-anim-in');
+
+      // Phase 3: Settle animation cleanly after total ~220ms
+      iconSettleTimer = setTimeout(function () {
+        themeToggle.classList.remove('theme-anim-in');
+        iconSettleTimer = null;
+        iconAnimTimer = null;
+      }, 110);
+    }, 110);
+  }
+
   if (themeToggle) {
-    themeToggle.addEventListener('click', function (e) {
-      var activeTheme = document.documentElement.getAttribute('data-theme');
+    themeToggle.addEventListener('click', function () {
+      var activeTheme = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
       var newTheme = activeTheme === 'dark' ? 'light' : 'dark';
 
-      // If View Transition unsupported or reduced motion requested, apply immediately
-      if (!document.startViewTransition || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        document.documentElement.setAttribute('data-theme', newTheme);
-        safeSetStorage('theme', newTheme);
-        updateThemeIcon(newTheme);
-        return;
-      }
+      // Instantly update root data-theme attribute and save safely
+      document.documentElement.setAttribute('data-theme', newTheme);
+      safeSetStorage('theme', newTheme);
 
-      var x = e.clientX || window.innerWidth / 2;
-      var y = e.clientY || window.innerHeight / 2;
-      var endRadius = Math.hypot(
-        Math.max(x, window.innerWidth - x),
-        Math.max(y, window.innerHeight - y)
-      );
-
-      var transition = document.startViewTransition(function () {
-        document.documentElement.setAttribute('data-theme', newTheme);
-        safeSetStorage('theme', newTheme);
-        updateThemeIcon(newTheme);
-      });
-
-      transition.ready.then(function () {
-        document.documentElement.animate(
-          {
-            clipPath: [
-              'circle(0px at ' + x + 'px ' + y + 'px)',
-              'circle(' + endRadius + 'px at ' + x + 'px ' + y + 'px)'
-            ]
-          },
-          {
-            duration: 500,
-            easing: 'cubic-bezier(0.3, 0, 0.2, 1)',
-            pseudoElement: '::view-transition-new(root)'
-          }
-        );
-      });
+      // Trigger lightweight, cancelable icon animation
+      triggerIconAnimation(newTheme);
     });
   }
 

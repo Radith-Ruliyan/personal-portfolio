@@ -2,6 +2,10 @@
    TOKENS
    ========================================================= */
 :root{
+  color-scheme: dark;
+  --theme-duration: 260ms;
+  --theme-ease: cubic-bezier(.2, .8, .2, 1);
+
   --bg:            #0d131f;   /* Deep warm midnight blue */
   --bg-elevated:   #131b2c;   /* Elevated warm blue */
   --bg-card:       #182235;   /* Warm card slate-blue */
@@ -29,6 +33,7 @@
 }
 
 [data-theme="light"] {
+  color-scheme: light;
   --bg:            #fcfaf6;   /* Soft warm calm cream/ivory */
   --bg-elevated:   #f5f2eb;   /* Warm grey-beige */
   --bg-card:       #ffffff;   /* Pure white card */
@@ -64,7 +69,7 @@ body{
   font-weight: 400;
   line-height: 1.65;
   -webkit-font-smoothing: antialiased;
-  transition: background-color .3s var(--ease), color .3s var(--ease);
+  transition: background-color var(--theme-duration) var(--theme-ease), color var(--theme-duration) var(--theme-ease);
   position: relative;
 }
 
@@ -122,17 +127,23 @@ body::after {
   height: 100%;
   background: var(--border-soft);
   opacity: 0.8;
+  transition: background-color var(--theme-duration) var(--theme-ease);
 }
 
-h1,h2,h3{
+h1,h2,h3,h4,h5,h6{
   font-family: var(--font-display);
   font-weight: 700;
   color: var(--text-primary);
   margin: 0 0 .5em;
   letter-spacing: -.02em;
+  transition: color var(--theme-duration) var(--theme-ease);
 }
 
-p{ color: var(--text-secondary); margin: 0 0 1em; }
+p{
+  color: var(--text-secondary);
+  margin: 0 0 1em;
+  transition: color var(--theme-duration) var(--theme-ease);
+}
 
 a{ color: inherit; text-decoration: none; }
 
@@ -210,7 +221,7 @@ button{ font-family: inherit; cursor: pointer; }
   flex-direction: column;
   gap: 1.5rem;
   z-index: 100;
-  transition: transform .35s var(--ease), background-color .3s var(--ease), border-color .3s var(--ease);
+  transition: transform .35s var(--ease), background-color var(--theme-duration) var(--theme-ease), border-color var(--theme-duration) var(--theme-ease);
   overflow-y: auto;
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
@@ -228,7 +239,7 @@ button{ font-family: inherit; cursor: pointer; }
   border-radius: var(--radius);
   position: relative;
   overflow: hidden;
-  transition: border-color .3s var(--ease), background-color .3s var(--ease), transform .3s var(--ease), box-shadow .3s var(--ease);
+  transition: border-color var(--theme-duration) var(--theme-ease), background-color var(--theme-duration) var(--theme-ease), transform .3s var(--ease), box-shadow .3s var(--ease);
 }
 @media (hover: hover) and (pointer: fine) {
   .sidenav__brand:hover {
@@ -330,7 +341,7 @@ button{ font-family: inherit; cursor: pointer; }
   color: var(--text-secondary);
   padding: .62rem .1rem .62rem 1.1rem;
   border-left: 2px solid transparent;
-  transition: color .2s var(--ease), border-color .2s var(--ease), padding .2s var(--ease);
+  transition: color var(--theme-duration) var(--theme-ease), border-color var(--theme-duration) var(--theme-ease), padding .2s var(--ease);
 }
 .nav-link::before{
   content: attr(data-label);
@@ -369,7 +380,7 @@ button{ font-family: inherit; cursor: pointer; }
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   font-size: .88rem;
-  transition: color .2s var(--ease), border-color .2s var(--ease), background-color .2s var(--ease);
+  transition: color var(--theme-duration) var(--theme-ease), border-color var(--theme-duration) var(--theme-ease), background-color var(--theme-duration) var(--theme-ease);
 }
 .sidenav__social a:hover{
   color: var(--accent);
@@ -394,11 +405,12 @@ button{ font-family: inherit; cursor: pointer; }
   gap: 5px;
   cursor: pointer;
   touch-action: manipulation;
+  transition: background-color var(--theme-duration) var(--theme-ease), border-color var(--theme-duration) var(--theme-ease);
 }
 .nav-toggle span{
   width: 20px; height: 2px;
   background: var(--text-primary);
-  transition: transform .25s var(--ease), opacity .25s var(--ease);
+  transition: transform .25s var(--ease), opacity .25s var(--ease), background-color var(--theme-duration) var(--theme-ease);
 }
 .nav-toggle.is-open span:nth-child(1){ transform: translateY(7px) rotate(45deg); }
 .nav-toggle.is-open span:nth-child(2){ opacity: 0; }
@@ -435,7 +447,7 @@ main{
   padding: 6rem 4.5rem 7rem;
   max-width: 1100px;
   border-bottom: 1px solid var(--border-soft);
-  transition: border-color .3s var(--ease);
+  transition: border-color var(--theme-duration) var(--theme-ease);
   min-width: 0;
 }
 
@@ -533,7 +545,7 @@ main{
   min-height: 44px;
   border-radius: var(--radius);
   border: 1px solid transparent;
-  transition: transform .2s var(--ease), background .2s var(--ease), border-color .2s var(--ease), color .2s var(--ease);
+  transition: transform .2s var(--ease), background var(--theme-duration) var(--theme-ease), border-color var(--theme-duration) var(--theme-ease), color var(--theme-duration) var(--theme-ease);
 }
 .btn--primary{
   background: var(--accent);
@@ -644,7 +656,7 @@ main{
   border: 1px solid var(--border);
   border-radius: 6px;
   color: var(--text-secondary);
-  transition: border-color .2s var(--ease), color .2s var(--ease), background-color .2s var(--ease);
+  transition: border-color var(--theme-duration) var(--theme-ease), color var(--theme-duration) var(--theme-ease), background-color var(--theme-duration) var(--theme-ease);
 }
 .chip:hover{ border-color: var(--accent-2); color: var(--accent-2); }
 
@@ -663,7 +675,7 @@ main{
   overflow: hidden;
   min-width: 0;
   position: relative;
-  transition: transform .3s var(--ease), border-color .3s var(--ease), box-shadow .3s var(--ease), background-color .3s var(--ease);
+  transition: transform .3s var(--ease), border-color var(--theme-duration) var(--theme-ease), box-shadow .3s var(--ease), background-color var(--theme-duration) var(--theme-ease);
 }
 @media (hover: hover) and (pointer: fine) {
   .card:hover{
@@ -696,6 +708,7 @@ main{
   border-radius: 4px;
   letter-spacing: .04em;
   text-transform: uppercase;
+  transition: color var(--theme-duration) var(--theme-ease), background-color var(--theme-duration) var(--theme-ease);
 }
 
 .card__links{
@@ -721,7 +734,7 @@ main{
   color: var(--text-secondary);
   cursor: pointer;
   text-decoration: none;
-  transition: color .2s var(--ease), border-color .2s var(--ease), background-color .2s var(--ease);
+  transition: color var(--theme-duration) var(--theme-ease), border-color var(--theme-duration) var(--theme-ease), background-color var(--theme-duration) var(--theme-ease);
 }
 @media (hover: hover) and (pointer: fine) {
   .card__links a:hover,
@@ -757,6 +770,7 @@ main{
   align-items: center;
   gap: .4rem;
   letter-spacing: .02em;
+  transition: color var(--theme-duration) var(--theme-ease);
 }
 .read-more i{ transition: transform .2s var(--ease); }
 .read-more:hover i{ transform: translateX(3px); }
@@ -883,7 +897,7 @@ main{
   box-shadow: 0 20px 50px rgba(0,0,0,0.6);
   overflow: hidden;
   transform: scale(0.95);
-  transition: transform .3s var(--ease);
+  transition: transform .3s var(--ease), background-color var(--theme-duration) var(--theme-ease), border-color var(--theme-duration) var(--theme-ease);
   margin: auto;
 }
 .cert-modal.is-open .cert-modal__dialog{
@@ -898,6 +912,7 @@ main{
   gap: .75rem;
   background: var(--bg-elevated);
   flex-shrink: 0;
+  transition: background-color var(--theme-duration) var(--theme-ease), border-color var(--theme-duration) var(--theme-ease);
 }
 .cert-modal__title{
   font-size: 1rem;
@@ -921,7 +936,7 @@ main{
   place-items: center;
   border-radius: var(--radius-sm);
   cursor: pointer;
-  transition: color .2s var(--ease), background-color .2s var(--ease);
+  transition: color var(--theme-duration) var(--theme-ease), background-color var(--theme-duration) var(--theme-ease);
   flex-shrink: 0;
 }
 @media (hover: hover) and (pointer: fine) {
@@ -938,6 +953,7 @@ main{
   place-items: center;
   background: var(--bg);
   flex: 1;
+  transition: background-color var(--theme-duration) var(--theme-ease);
 }
 .cert-modal__body img{
   max-width: 100%;
@@ -1129,7 +1145,7 @@ main{
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  transition: border-color .2s var(--ease), background-color .3s var(--ease);
+  transition: border-color var(--theme-duration) var(--theme-ease), background-color var(--theme-duration) var(--theme-ease);
   min-width: 0;
 }
 @media (hover: hover) and (pointer: fine) {
@@ -1171,7 +1187,7 @@ main{
   font-size: 1rem; /* 16px to prevent iOS zoom */
   resize: vertical;
   max-width: 100%;
-  transition: border-color .2s var(--ease), background-color .3s var(--ease), color .3s var(--ease);
+  transition: border-color var(--theme-duration) var(--theme-ease), background-color var(--theme-duration) var(--theme-ease), color var(--theme-duration) var(--theme-ease);
 }
 .field input:focus, .field textarea:focus{
   outline: none;
@@ -1213,7 +1229,7 @@ main{
   opacity: 0;
   visibility: hidden;
   transform: translateY(10px);
-  transition: opacity .3s var(--ease), transform .3s var(--ease), border-color .3s var(--ease), background-color .3s var(--ease), color .3s var(--ease);
+  transition: opacity .3s var(--ease), transform .3s var(--ease), border-color var(--theme-duration) var(--theme-ease), background-color var(--theme-duration) var(--theme-ease), color var(--theme-duration) var(--theme-ease);
   z-index: 80;
   cursor: pointer;
 }
@@ -1242,8 +1258,9 @@ main{
   z-index: 150;
   cursor: pointer;
   touch-action: manipulation;
-  transition: background-color .3s var(--ease), border-color .3s var(--ease), color .3s var(--ease), transform .2s var(--ease);
+  transition: background-color var(--theme-duration) var(--theme-ease), border-color var(--theme-duration) var(--theme-ease), color var(--theme-duration) var(--theme-ease), transform .2s var(--ease);
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  overflow: hidden;
 }
 @media (hover: hover) and (pointer: fine) {
   .theme-toggle:hover {
@@ -1254,15 +1271,44 @@ main{
 }
 .theme-toggle i {
   font-size: 1.15rem;
-  transition: transform .4s var(--ease);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  pointer-events: none;
+  transform-origin: center center;
+  will-change: transform, opacity;
 }
 
-/* =========================================================
-   THEME TRANSITION ANIMATION (View Transitions API)
-   ========================================================= */
-::view-transition-group(root) {
-  animation-duration: 0.4s;
-  animation-timing-function: var(--ease);
+/* Lightweight Icon Animation (Cancelable, 220ms total) */
+@keyframes themeIconOut {
+  0% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.65) rotate(60deg);
+    opacity: 0;
+  }
+}
+
+@keyframes themeIconIn {
+  0% {
+    transform: scale(0.65) rotate(-60deg);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+.theme-toggle.theme-anim-out i {
+  animation: themeIconOut 110ms var(--theme-ease) forwards;
+}
+
+.theme-toggle.theme-anim-in i {
+  animation: themeIconIn 110ms var(--theme-ease) forwards;
 }
 
 /* =========================================================
@@ -1538,20 +1584,20 @@ a, button, input, textarea, .nav-link, .chip, .tag {
   /* Magnetic interactive button transition */
   .btn, .theme-toggle, .sidenav__brand, .sidenav__social a {
     will-change: transform;
-    transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+    transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1),
+                background-color var(--theme-duration) var(--theme-ease),
+                border-color var(--theme-duration) var(--theme-ease),
+                color var(--theme-duration) var(--theme-ease);
   }
 }
 
-/* =========================================================
-   THEME CLIP PATH RIPPLE TRANSITION (circular sweep)
-   ========================================================= */
-::view-transition-image-pair(root) {
-  isolation: auto;
-}
-
-::view-transition-old(root),
-::view-transition-new(root) {
-  animation: none;
-  mix-blend-mode: normal;
-  display: block;
+/* Reduced Motion Override for Theme System */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --theme-duration: 0ms !important;
+  }
+  .theme-toggle.theme-anim-out i,
+  .theme-toggle.theme-anim-in i {
+    animation: none !important;
+  }
 }
